@@ -28,6 +28,6 @@ public class Product {
     @ManyToOne
     private Order order;
 
-    @OneToMany(mappedBy = "promotion")
+    @OneToMany(mappedBy = "product")
     private List<ProductPromotion> product_promotions;
 }
