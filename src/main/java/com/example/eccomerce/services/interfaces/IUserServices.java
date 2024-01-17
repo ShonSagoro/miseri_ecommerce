@@ -16,5 +16,7 @@ public interface IUserServices {
 
     BaseResponse get(Long id);
 
+    User findById(Long id);
+
     User findByEmail(String email);
 }

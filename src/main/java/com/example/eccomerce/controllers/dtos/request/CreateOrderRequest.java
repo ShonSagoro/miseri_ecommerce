@@ -9,7 +9,7 @@ public class CreateOrderRequest {
     
     private Long costTotal;
 
-    private Long paymentMethodId;
+    private String paymentMethod;
 
     private Long userId;
 }

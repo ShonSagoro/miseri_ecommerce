@@ -10,7 +10,7 @@ public class GetProductResponse {
     
     private String name;    
 
-    private Long cost;
+    private Long price;
 
     private String description;
 }

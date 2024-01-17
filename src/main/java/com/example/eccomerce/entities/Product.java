@@ -20,7 +20,7 @@ public class Product {
     private String name;
 
     @Column(nullable = false)
-    private Long cost;
+    private Long price;
 
     @Column(nullable = false)
     private String description;
