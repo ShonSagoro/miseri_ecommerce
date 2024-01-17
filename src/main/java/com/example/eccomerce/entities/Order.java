@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.util.List;
 
+import com.example.eccomerce.entities.enums.PaymentMethodType;
+
 @Entity
 @Table(name = "orders")
 @Getter
@@ -20,11 +22,11 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<Product> products;
 
-    @OneToOne
-    @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
-    private PaymentMethod paymentMethod;
+    @Column(name = "payment_method_type", nullable = false)
+    private PaymentMethodType type;
 
     @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
 }

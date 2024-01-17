@@ -24,6 +24,5 @@ public class User {
     private String password;
 
     @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
 }
