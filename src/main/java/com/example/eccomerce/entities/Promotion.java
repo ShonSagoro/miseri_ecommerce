@@ -1,5 +1,6 @@
 package com.example.eccomerce.entities;
 
+import com.example.eccomerce.entities.enums.PromotionType;
 import com.example.eccomerce.entities.pivot.ProductPromotion;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,12 +24,11 @@ public class Promotion {
     @Column(nullable = false)
     private String description;
 
-    //    Haz un enum para el tipo de promoción
     @Column(nullable = false)
-    private String type;
+    private PromotionType type;
 
     @Column(nullable = false)
-    private Float discount;
+    private Float value;
 
     @OneToMany(mappedBy = "promotion")
     private List<ProductPromotion> product_promotion;
