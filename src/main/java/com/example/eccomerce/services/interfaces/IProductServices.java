@@ -3,6 +3,8 @@ package com.example.eccomerce.services.interfaces;
 import com.example.eccomerce.controllers.dtos.request.CreateProductRequest;
 import com.example.eccomerce.controllers.dtos.request.UpdateProductRequest;
 import com.example.eccomerce.controllers.dtos.response.BaseResponse;
+import com.example.eccomerce.controllers.dtos.response.GetProductResponse;
+import com.example.eccomerce.controllers.dtos.response.GetPromotionResponse;
 import com.example.eccomerce.entities.Product;
 
 public interface IProductServices {
@@ -17,5 +19,7 @@ public interface IProductServices {
     BaseResponse get(Long id);
 
     Product findById(Long id);
+
+    GetProductResponse findResponseById(Long id);
     
 }

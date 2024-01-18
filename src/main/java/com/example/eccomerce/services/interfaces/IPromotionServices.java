@@ -3,6 +3,8 @@ package com.example.eccomerce.services.interfaces;
 import com.example.eccomerce.controllers.dtos.request.CreatePromotionRequest;
 import com.example.eccomerce.controllers.dtos.request.UpdatePromotionRequest;
 import com.example.eccomerce.controllers.dtos.response.BaseResponse;
+import com.example.eccomerce.controllers.dtos.response.GetProductResponse;
+import com.example.eccomerce.controllers.dtos.response.GetPromotionResponse;
 import com.example.eccomerce.entities.Promotion;
 
 public interface IPromotionServices {
@@ -17,4 +19,7 @@ public interface IPromotionServices {
     BaseResponse get(Long id);
 
     Promotion findById(Long id);
+
+    GetPromotionResponse findResponseById(Long id);
+
 }

@@ -13,7 +13,9 @@ import com.example.eccomerce.entities.Promotion;
 import com.example.eccomerce.entities.enums.converters.PromotionTypeConverter;
 import com.example.eccomerce.repositories.IPromotionRepository;
 import com.example.eccomerce.services.interfaces.IPromotionServices;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PromotionServiceImpl implements IPromotionServices {
 
     @Autowired
@@ -76,6 +78,12 @@ public class PromotionServiceImpl implements IPromotionServices {
     public Promotion findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(RuntimeException::new);
+    }
+
+    @Override
+    public GetPromotionResponse findResponseById(Long id) {
+        return from(repository.findById(id)
+                .orElseThrow(RuntimeException::new));
     }
 
     private GetPromotionResponse from(Promotion promotion) {

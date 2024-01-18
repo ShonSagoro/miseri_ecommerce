@@ -3,6 +3,8 @@ package com.example.eccomerce.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.eccomerce.controllers.dtos.response.GetOrderResponse;
+import com.example.eccomerce.services.interfaces.IOrderServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +22,9 @@ import com.example.eccomerce.services.interfaces.IUserServices;
 public class UserServicesImpl implements IUserServices {
     @Autowired
     private IUserRepository repository;
+
+    @Autowired
+    private IOrderServices orderServices;
 
     @Override
     public BaseResponse get(Long id) {
@@ -76,6 +81,16 @@ public class UserServicesImpl implements IUserServices {
     public User findByEmail(String email) {
         return repository.findByEmail(email)
                 .orElseThrow(RuntimeException::new);
+    }
+
+    @Override
+    public BaseResponse findOrdersByUserId(Long id) {
+        List<GetOrderResponse> responses = orderServices.findOrderByUserId(id);
+        return BaseResponse.builder()
+                .data(responses)
+                .message("find all orders by user")
+                .success(true)
+                .httpStatus(HttpStatus.FOUND).build();
     }
 
     @Override

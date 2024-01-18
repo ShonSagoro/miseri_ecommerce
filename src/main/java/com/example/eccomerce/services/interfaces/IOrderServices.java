@@ -3,7 +3,10 @@ package com.example.eccomerce.services.interfaces;
 import com.example.eccomerce.controllers.dtos.request.CreateOrderRequest;
 import com.example.eccomerce.controllers.dtos.request.UpdateOrderRequest;
 import com.example.eccomerce.controllers.dtos.response.BaseResponse;
+import com.example.eccomerce.controllers.dtos.response.GetOrderResponse;
 import com.example.eccomerce.entities.Order;
+
+import java.util.List;
 
 public interface IOrderServices {
    BaseResponse create(CreateOrderRequest request);
@@ -17,5 +20,7 @@ public interface IOrderServices {
     BaseResponse get(Long id);
 
     Order findById(Long id);
+
+    List<GetOrderResponse> findOrderByUserId(Long id);
     
 }

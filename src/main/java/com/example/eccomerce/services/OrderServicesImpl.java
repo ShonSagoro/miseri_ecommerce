@@ -84,6 +84,14 @@ public class OrderServicesImpl implements IOrderServices {
                 .orElseThrow(RuntimeException::new);
     }
 
+    @Override
+    public List<GetOrderResponse> findOrderByUserId(Long id) {
+        return repository.findByUserId(id)
+                .stream()
+                .map(this::from)
+                .toList();
+    }
+
     private GetOrderResponse from(Order order) {
         GetOrderResponse response = new GetOrderResponse();
         response.setId(order.getId());

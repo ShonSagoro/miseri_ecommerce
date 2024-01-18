@@ -12,7 +12,9 @@ import com.example.eccomerce.controllers.dtos.response.GetProductResponse;
 import com.example.eccomerce.entities.Product;
 import com.example.eccomerce.repositories.IProductRepository;
 import com.example.eccomerce.services.interfaces.IProductServices;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ProductServicesImpl implements IProductServices {
 
     @Autowired
@@ -72,6 +74,12 @@ public class ProductServicesImpl implements IProductServices {
     public Product findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(RuntimeException::new);
+    }
+
+    @Override
+    public GetProductResponse findResponseById(Long id) {
+        return from(repository.findById(id)
+                .orElseThrow(RuntimeException::new));
     }
 
     private GetProductResponse from(Product product) {

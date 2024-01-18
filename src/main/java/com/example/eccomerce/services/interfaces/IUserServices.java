@@ -19,4 +19,6 @@ public interface IUserServices {
     User findById(Long id);
 
     User findByEmail(String email);
+
+    BaseResponse findOrdersByUserId(Long id);
 }
