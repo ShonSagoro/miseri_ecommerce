@@ -1,9 +1,11 @@
 package com.example.eccomerce.services;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ import com.example.eccomerce.services.interfaces.IUserServices;
 @Service
 public class OrderServicesImpl implements IOrderServices {
     @Autowired
+    @Lazy
     private IOrderRepository repository;
 
     @Autowired
@@ -27,6 +30,8 @@ public class OrderServicesImpl implements IOrderServices {
 
     @Autowired
     private PaymentMethodTypeConverter converter;
+    private static final String FormatTime = "yyyy-MM-dd HH:mm:ss";
+
 
     @Override
     public BaseResponse create(CreateOrderRequest request) {
@@ -92,12 +97,18 @@ public class OrderServicesImpl implements IOrderServices {
                 .toList();
     }
 
+    @Override
+    public GetOrderResponse findResponseById(Long id) {
+        return from(findById(id));
+    }
+
     private GetOrderResponse from(Order order) {
         GetOrderResponse response = new GetOrderResponse();
         response.setId(order.getId());
         response.setCostTotal(order.getCostTotal());
         response.setPaymentMethod(converter.convertToDatabaseColumn(order.getType()));
         response.setUserId(order.getUser().getId());
+        response.setTime(formartLocalDateTime(order.getRequestTime(), FormatTime));
         // response.setProducts(order.getProducts()); //falta la lista de productos por
         // id de orden
         return response;
@@ -118,6 +129,11 @@ public class OrderServicesImpl implements IOrderServices {
         order.setType(converter.convertToEntityAttribute(update.getPaymentMethod()));
         order.setRequestTime(LocalDateTime.now());
         return order;
+    }
+
+    private String formartLocalDateTime(LocalDateTime dateTime, String format) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        return dateTime.format(formatter);
     }
 
 }

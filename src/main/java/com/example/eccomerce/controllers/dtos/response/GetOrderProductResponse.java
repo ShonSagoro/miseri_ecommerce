@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Builder
-@Setter
 @Getter
-public class GetProductPromotionResponse {
+@Setter
+public class GetOrderProductResponse {
     private Long id;
-    private GetPromotionResponse promotion;
+    private GetOrderResponse order;
     private GetProductResponse product;
 }

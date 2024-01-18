@@ -9,7 +9,7 @@ public class UpdateProductRequest  {
     
     private String name;
 
-    private Long price;
+    private Float price;
 
     private String description;
 

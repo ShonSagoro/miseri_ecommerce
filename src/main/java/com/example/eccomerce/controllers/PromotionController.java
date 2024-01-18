@@ -16,7 +16,7 @@ import com.example.eccomerce.controllers.dtos.request.UpdatePromotionRequest;
 import com.example.eccomerce.controllers.dtos.response.BaseResponse;
 import com.example.eccomerce.services.interfaces.IPromotionServices;
 
-@RequestMapping("promotions")
+@RequestMapping("promotion")
 @Controller
 public class PromotionController {
     @Autowired

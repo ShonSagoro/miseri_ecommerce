@@ -14,6 +14,7 @@ import com.example.eccomerce.services.interfaces.IProductPromotionServices;
 import com.example.eccomerce.services.interfaces.IProductServices;
 import com.example.eccomerce.services.interfaces.IPromotionServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class ProductoPromotionsServicesImpl implements IProductPromotionServices
                 .data(from(productPromotion))
                 .message("The product promotion was created")
                 .success(true)
+                .httpStatus(HttpStatus.CREATED)
                 .build();
     }
 
@@ -50,7 +52,7 @@ public class ProductoPromotionsServicesImpl implements IProductPromotionServices
                 .data(response)
                 .message("find all products by promotion")
                 .success(true)
-                .build();
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ProductoPromotionsServicesImpl implements IProductPromotionServices
                 .data(response)
                 .message("find all promotions by product")
                 .success(true)
-                .build();
+                .httpStatus(HttpStatus.OK).build();
     }
 
     private GetPromotionResponse from(PromotionProjection promotion) {

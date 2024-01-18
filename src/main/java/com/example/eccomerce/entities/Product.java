@@ -1,5 +1,6 @@
 package com.example.eccomerce.entities;
 
+import com.example.eccomerce.entities.pivot.OrderProduct;
 import com.example.eccomerce.entities.pivot.ProductPromotion;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,13 +21,13 @@ public class Product {
     private String name;
 
     @Column(nullable = false)
-    private Long price;
+    private Float price;
 
     @Column(nullable = false)
     private String description;
 
-    @ManyToOne
-    private Order order;
+    @OneToMany(mappedBy = "product")
+    private List<OrderProduct> order_products;
 
     @OneToMany(mappedBy = "product")
     private List<ProductPromotion> product_promotions;

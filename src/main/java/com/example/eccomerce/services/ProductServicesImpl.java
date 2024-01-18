@@ -22,7 +22,7 @@ public class ProductServicesImpl implements IProductServices {
 
     @Override
     public BaseResponse create(CreateProductRequest request) {
-        Product product = repository.save(from(request));
+            Product product = repository.save(from(request));
         return BaseResponse.builder()
                 .data(from(product))
                 .message("The product was created")

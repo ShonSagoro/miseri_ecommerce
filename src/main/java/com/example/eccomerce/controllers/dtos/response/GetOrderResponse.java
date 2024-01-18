@@ -11,11 +11,13 @@ public class GetOrderResponse {
 
     private Long id;
 
-    private Long costTotal;
+    private Float costTotal;
 
     private String paymentMethod;
 
     private Long userId;
+
+    private String time;
     
     private List<GetProductResponse> products;
 }

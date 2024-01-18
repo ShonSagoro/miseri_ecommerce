@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateOrderRequest {
-    private Float costTotal;
-
-    private String paymentMethod;
+public class CreateOrderProductRequest {
+    private Long orderId;
+    private Long productId;
 }

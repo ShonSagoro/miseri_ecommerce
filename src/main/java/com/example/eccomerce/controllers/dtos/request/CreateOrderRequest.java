@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class CreateOrderRequest {
     
-    private Long costTotal;
+    private Float costTotal;
 
     private String paymentMethod;
 

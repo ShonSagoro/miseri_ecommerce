@@ -1,5 +1,6 @@
 package com.example.eccomerce.entities;
 
+import com.example.eccomerce.entities.pivot.OrderProduct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,10 +19,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long costTotal;
-
-    @OneToMany(mappedBy = "order")
-    private List<Product> products;
+    private Float costTotal;
 
     @Column(name = "payment_method_type", nullable = false)
     private PaymentMethodType type;
@@ -29,9 +27,9 @@ public class Order {
     @Column(name = "request_time")
     private LocalDateTime requestTime;
 
+    @OneToMany(mappedBy = "order")
+    private List<OrderProduct> products;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
     private User user;
-
 }

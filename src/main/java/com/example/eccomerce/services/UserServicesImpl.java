@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.example.eccomerce.controllers.dtos.response.GetOrderResponse;
 import com.example.eccomerce.services.interfaces.IOrderServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class UserServicesImpl implements IUserServices {
     private IUserRepository repository;
 
     @Autowired
+    @Lazy
     private IOrderServices orderServices;
 
     @Override

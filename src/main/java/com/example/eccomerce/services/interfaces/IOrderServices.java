@@ -4,6 +4,7 @@ import com.example.eccomerce.controllers.dtos.request.CreateOrderRequest;
 import com.example.eccomerce.controllers.dtos.request.UpdateOrderRequest;
 import com.example.eccomerce.controllers.dtos.response.BaseResponse;
 import com.example.eccomerce.controllers.dtos.response.GetOrderResponse;
+import com.example.eccomerce.controllers.dtos.response.GetProductResponse;
 import com.example.eccomerce.entities.Order;
 
 import java.util.List;
@@ -22,5 +23,9 @@ public interface IOrderServices {
     Order findById(Long id);
 
     List<GetOrderResponse> findOrderByUserId(Long id);
-    
+
+
+    GetOrderResponse findResponseById(Long id);
+
+
 }
