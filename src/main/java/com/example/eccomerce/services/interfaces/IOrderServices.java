@@ -10,7 +10,7 @@ import com.example.eccomerce.entities.Order;
 import java.util.List;
 
 public interface IOrderServices {
-   BaseResponse create(CreateOrderRequest request);
+    BaseResponse create(CreateOrderRequest request);
 
     BaseResponse update(Long id, UpdateOrderRequest request);
 
@@ -22,8 +22,9 @@ public interface IOrderServices {
 
     Order findById(Long id);
 
-    List<GetOrderResponse> findOrderByUserId(Long id);
+    BaseResponse getByRequestDate(String startMonth, String endMonth);
 
+    List<GetOrderResponse> findOrderByUserId(Long id);
 
     GetOrderResponse findResponseById(Long id);
 

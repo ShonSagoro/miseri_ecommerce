@@ -1,5 +1,6 @@
 package com.example.eccomerce.controllers;
 
+import com.example.eccomerce.controllers.dtos.request.DateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,14 +23,29 @@ public class OrderController {
     @Autowired
     private IOrderServices service;
 
-      @GetMapping("/{id}")
+    @Autowired
+    private OrderProductController orderProductController;
+
+    @GetMapping("/{id}")
     public ResponseEntity<BaseResponse> get(@PathVariable Long id) {
         return service.get(id).apply();
+    }
+
+    @GetMapping("/date/{startMonth}-{endMonth}")
+    public ResponseEntity<BaseResponse> getOrdersByDateRange(
+            @PathVariable String startMonth,
+            @PathVariable String endMonth) {
+        return service.getByRequestDate(startMonth, endMonth).apply();
     }
 
     @GetMapping
     public ResponseEntity<BaseResponse> getAll() {
         return service.list().apply();
+    }
+
+    @GetMapping("/{id}/products")
+    public ResponseEntity<BaseResponse> getAllProductsByIdOrder(@PathVariable Long id) {
+        return orderProductController.listProducts(id);
     }
 
     @PostMapping
@@ -39,7 +55,7 @@ public class OrderController {
 
     @PutMapping("/{id}")
     public ResponseEntity<BaseResponse> update(@RequestBody UpdateOrderRequest request,
-            @PathVariable Long id) {
+                                               @PathVariable Long id) {
 
         return service.update(id, request).apply();
     }

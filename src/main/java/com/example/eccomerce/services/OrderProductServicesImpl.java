@@ -21,14 +21,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class OrderProductServicesImpl implements IOrderProductServices{
+public class OrderProductServicesImpl implements IOrderProductServices {
     @Autowired
     private IOrderProductRepository repository;
-    @Autowired @Lazy
+    @Autowired
+    @Lazy
     private IOrderServices orderServices;
 
-    @Autowired @Lazy
+    @Autowired
+    @Lazy
     private IProductServices productServices;
+
     @Override
     public BaseResponse create(CreateOrderProductRequest request) {
         OrderProduct orderProduct = from(request);
@@ -52,6 +55,14 @@ public class OrderProductServicesImpl implements IOrderProductServices{
                 .message("find all products by order")
                 .success(true)
                 .httpStatus(HttpStatus.OK).build();
+    }
+
+    @Override
+    public List<GetProductResponse> getProductsReponseByIdOrder(Long orderId) {
+        List<ProductProjection> products = repository.listAllProductsByOrderId(orderId);
+        return products.stream()
+                .map(this::from)
+                .toList();
     }
 
     @Override

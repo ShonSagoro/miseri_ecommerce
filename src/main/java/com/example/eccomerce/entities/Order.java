@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,8 +25,7 @@ public class Order {
     @Column(name = "payment_method_type", nullable = false)
     private PaymentMethodType type;
 
-    @Column(name = "request_time")
-    private LocalDateTime requestTime;
+    private LocalDate date;
 
     @OneToMany(mappedBy = "order")
     private List<OrderProduct> products;
