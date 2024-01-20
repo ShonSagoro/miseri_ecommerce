@@ -8,8 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 public class CreateOrderRequest {
-    
-    private Float costTotal;
 
     private String paymentMethod;
 

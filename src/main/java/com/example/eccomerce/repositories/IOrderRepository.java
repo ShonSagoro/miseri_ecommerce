@@ -14,8 +14,6 @@ public interface IOrderRepository extends JpaRepository<Order, Long> {
     @Query(value = "select * from orders where orders.user_id = :userId", nativeQuery = true)
     List<Order> findByUserId(Long userId);
 
-    List<Order> findByDateBetween(LocalDate startDate, LocalDate endDate);
-
     List<Order>findByType(String type);
 
 }

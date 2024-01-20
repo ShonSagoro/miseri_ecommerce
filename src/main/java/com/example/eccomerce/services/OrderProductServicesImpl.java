@@ -78,6 +78,12 @@ public class OrderProductServicesImpl implements IOrderProductServices {
                 .httpStatus(HttpStatus.OK).build();
     }
 
+    @Override
+    public void deleteProductByOrderId(Long orderId) {
+        repository.deleteProductByOrderId(orderId);
+
+    }
+
     private GetProductResponse from(ProductProjection product) {
         return productServices.findResponseById(product.getId());
     }

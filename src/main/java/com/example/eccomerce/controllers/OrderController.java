@@ -1,6 +1,5 @@
 package com.example.eccomerce.controllers;
 
-import com.example.eccomerce.controllers.dtos.request.DateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.eccomerce.controllers.dtos.request.CreateOrderRequest;
-import com.example.eccomerce.controllers.dtos.request.UpdateOrderRequest;
 import com.example.eccomerce.controllers.dtos.response.BaseResponse;
 import com.example.eccomerce.services.interfaces.IOrderServices;
 
@@ -53,12 +51,6 @@ public class OrderController {
         return service.create(request).apply();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BaseResponse> update(@RequestBody UpdateOrderRequest request,
-                                               @PathVariable Long id) {
-
-        return service.update(id, request).apply();
-    }
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable Long id) {

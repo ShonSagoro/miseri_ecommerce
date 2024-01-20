@@ -13,4 +13,6 @@ public interface IOrderProductServices {
 
     List<GetProductResponse> getProductsReponseByIdOrder(Long orderId);
     BaseResponse getOrdersByProductId(Long productId);
+
+    void deleteProductByOrderId(Long orderId);
 }

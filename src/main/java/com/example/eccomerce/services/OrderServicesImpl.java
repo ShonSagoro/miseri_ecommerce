@@ -1,20 +1,21 @@
 package com.example.eccomerce.services;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import com.example.eccomerce.controllers.dtos.request.CreateOrderProductRequest;
-import com.example.eccomerce.controllers.dtos.response.GetProductResponse;
 import com.example.eccomerce.services.interfaces.IOrderProductServices;
+import com.example.eccomerce.services.interfaces.IProductServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.example.eccomerce.controllers.dtos.request.CreateOrderRequest;
-import com.example.eccomerce.controllers.dtos.request.UpdateOrderRequest;
 import com.example.eccomerce.controllers.dtos.response.BaseResponse;
 import com.example.eccomerce.controllers.dtos.response.GetOrderResponse;
 import com.example.eccomerce.entities.Order;
@@ -39,6 +40,10 @@ public class OrderServicesImpl implements IOrderServices {
     @Lazy
     private IOrderProductServices orderProductServices;
 
+    @Autowired
+    @Lazy
+    private IProductServices productServices;
+
     private static final String FormatTime = "yyyy-MM-dd";
 
     @Override
@@ -49,14 +54,8 @@ public class OrderServicesImpl implements IOrderServices {
     }
 
     @Override
-    public BaseResponse update(Long id, UpdateOrderRequest request) {
-        Order order = findById(id);
-        order = repository.save(update(order, request));
-        return BaseResponse.builder().data(from(order)).message("The order was updated").success(true).httpStatus(HttpStatus.OK).build();
-    }
-
-    @Override
     public void delete(Long id) {
+        orderProductServices.deleteProductByOrderId(id);
         repository.deleteById(id);
     }
 
@@ -79,11 +78,12 @@ public class OrderServicesImpl implements IOrderServices {
 
     @Override
     public BaseResponse getByRequestDate(String startMonth, String endMonth) {
-        LocalDate startDate = LocalDate.parse(startMonth + "-01");
-        LocalDate endDate = LocalDate.parse(endMonth + "-01").plusMonths(1).minusDays(1);
-        List<GetOrderResponse> responses = repository.findByDateBetween(startDate, endDate).stream().map(this::from).toList();
+        List<GetOrderResponse> allOrders = repository.findAll().stream().map(this::from).toList();
+        List<GetOrderResponse> filteredOrders = allOrders.stream()
+                .filter(order -> order.getTime().compareTo(startMonth) >=0 && order.getTime().compareTo(endMonth)<=0)
+                .toList();
         return BaseResponse.builder()
-                .data(responses)
+                .data(filteredOrders)
                 .message("find all orders by date")
                 .success(true)
                 .httpStatus(HttpStatus.FOUND).build();
@@ -101,12 +101,16 @@ public class OrderServicesImpl implements IOrderServices {
 
     private void addProducts(CreateOrderRequest request, Order order) {
         List<Long> list = request.getProductsId();
+        Float costTotal = 0f;
         for (Long id : list) {
             CreateOrderProductRequest createOrderRequest = new CreateOrderProductRequest();
             createOrderRequest.setProductId(id);
             createOrderRequest.setOrderId(order.getId());
             orderProductServices.create(createOrderRequest);
+            costTotal+=productServices.findById(id).getPrice();
         }
+        order.setCostTotal(costTotal);
+        repository.save(order);
     }
 
     private GetOrderResponse from(Order order) {
@@ -115,7 +119,8 @@ public class OrderServicesImpl implements IOrderServices {
         response.setCostTotal(order.getCostTotal());
         response.setPaymentMethod(converter.convertToDatabaseColumn(order.getType()));
         response.setUserId(order.getUser().getId());
-        response.setTime(order.getDate().format(getFormatter(FormatTime)));
+        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM", new Locale("es", "ES"));
+        response.setTime(order.getDate().format(monthFormatter));
         response.setProducts(orderProductServices.getProductsReponseByIdOrder(order.getId()));
         return response;
 
@@ -123,16 +128,8 @@ public class OrderServicesImpl implements IOrderServices {
 
     private Order from(CreateOrderRequest request) {
         Order order = new Order();
-        order.setCostTotal(request.getCostTotal());
         order.setType(converter.convertToEntityAttribute(request.getPaymentMethod()));
         order.setUser(userService.findById(request.getUserId()));
-        order.setDate(LocalDate.now());
-        return order;
-    }
-
-    private Order update(Order order, UpdateOrderRequest update) {
-        order.setCostTotal(update.getCostTotal());
-        order.setType(converter.convertToEntityAttribute(update.getPaymentMethod()));
         order.setDate(LocalDate.now());
         return order;
     }
