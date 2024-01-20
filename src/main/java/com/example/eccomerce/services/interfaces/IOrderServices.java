@@ -18,7 +18,10 @@ public interface IOrderServices {
 
     Order findById(Long id);
 
-    BaseResponse getByRequestDate(String startMonth, String endMonth);
+    BaseResponse getByDate(String startMonth, String endMonth);
+
+    BaseResponse getByType(String paymentMethod);
+
 
     List<GetOrderResponse> findOrderByUserId(Long id);
 

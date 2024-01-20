@@ -33,7 +33,13 @@ public class OrderController {
     public ResponseEntity<BaseResponse> getOrdersByDateRange(
             @PathVariable String startMonth,
             @PathVariable String endMonth) {
-        return service.getByRequestDate(startMonth, endMonth).apply();
+        return service.getByDate(startMonth, endMonth).apply();
+    }
+
+    @GetMapping("/type/{methodPayment}")
+    public ResponseEntity<BaseResponse> getByPaymentMethod(
+            @PathVariable String methodPayment) {
+        return service.getByType(methodPayment).apply();
     }
 
     @GetMapping

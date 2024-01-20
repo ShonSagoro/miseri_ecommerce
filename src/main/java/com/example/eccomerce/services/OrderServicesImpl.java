@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.example.eccomerce.controllers.dtos.request.CreateOrderProductRequest;
+import com.example.eccomerce.entities.enums.PaymentMethodType;
 import com.example.eccomerce.services.interfaces.IOrderProductServices;
 import com.example.eccomerce.services.interfaces.IProductServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,7 @@ public class OrderServicesImpl implements IOrderServices {
     }
 
     @Override
-    public BaseResponse getByRequestDate(String startMonth, String endMonth) {
+    public BaseResponse getByDate(String startMonth, String endMonth) {
         List<GetOrderResponse> allOrders = repository.findAll().stream().map(this::from).toList();
         List<GetOrderResponse> filteredOrders = allOrders.stream()
                 .filter(order -> order.getTime().compareTo(startMonth) >=0 && order.getTime().compareTo(endMonth)<=0)
@@ -85,6 +86,17 @@ public class OrderServicesImpl implements IOrderServices {
         return BaseResponse.builder()
                 .data(filteredOrders)
                 .message("find all orders by date")
+                .success(true)
+                .httpStatus(HttpStatus.FOUND).build();
+    }
+
+    @Override
+    public BaseResponse getByType(String paymentMethod) {
+        PaymentMethodType type = converter.convertToEntityAttribute(paymentMethod);
+        List<GetOrderResponse> allOrders = repository.findByType(type).stream().map(this::from).toList();
+        return BaseResponse.builder()
+                .data(allOrders)
+                .message("find all orders by type")
                 .success(true)
                 .httpStatus(HttpStatus.FOUND).build();
     }

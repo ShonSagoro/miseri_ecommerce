@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum PaymentMethodType {
-    STRIPE("Stripe");
+    STRIPE("Stripe"),
+    PAYPAL("Paypal");
 
     private final String type;
 
