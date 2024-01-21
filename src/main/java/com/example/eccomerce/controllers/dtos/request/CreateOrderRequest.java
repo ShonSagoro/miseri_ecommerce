@@ -14,4 +14,6 @@ public class CreateOrderRequest {
     private Long userId;
 
     private List<Long> productsId;
+
+    private List<Long> promotionsId;
 }

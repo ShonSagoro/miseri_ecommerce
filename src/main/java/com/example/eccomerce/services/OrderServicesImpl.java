@@ -8,9 +8,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.example.eccomerce.controllers.dtos.request.CreateOrderProductRequest;
+import com.example.eccomerce.entities.Promotion;
 import com.example.eccomerce.entities.enums.PaymentMethodType;
-import com.example.eccomerce.services.interfaces.IOrderProductServices;
-import com.example.eccomerce.services.interfaces.IProductServices;
+import com.example.eccomerce.entities.pivot.ProductPromotion;
+import com.example.eccomerce.services.interfaces.*;
 import com.stripe.Stripe;
 import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,6 @@ import com.example.eccomerce.controllers.dtos.response.GetOrderResponse;
 import com.example.eccomerce.entities.Order;
 import com.example.eccomerce.entities.enums.converters.PaymentMethodTypeConverter;
 import com.example.eccomerce.repositories.IOrderRepository;
-import com.example.eccomerce.services.interfaces.IOrderServices;
-import com.example.eccomerce.services.interfaces.IUserServices;
 
 @Service
 public class OrderServicesImpl implements IOrderServices {
@@ -48,6 +47,10 @@ public class OrderServicesImpl implements IOrderServices {
     @Lazy
     private IProductServices productServices;
 
+    @Autowired
+    @Lazy
+    private IPromotionServices promotionServices;
+
     @Value("${stripe.secret-key}")
     private String stripeSecretKey;
 
@@ -61,6 +64,7 @@ public class OrderServicesImpl implements IOrderServices {
     public BaseResponse create(CreateOrderRequest request) {
         Order order = repository.save(from(request));
         addProducts(request, order);
+        addPromotions(request,order);
         Boolean status=simulateTransaction(order);
         if (status) {
             return BaseResponse.builder().data(from(order)).message("The order was created").success(true).httpStatus(HttpStatus.CREATED).build();
@@ -124,6 +128,31 @@ public class OrderServicesImpl implements IOrderServices {
     @Override
     public GetOrderResponse findResponseById(Long id) {
         return from(findById(id));
+    }
+
+    private void addPromotions(CreateOrderRequest request, Order order) {
+        List<Long> promotionIds = request.getPromotionsId();
+        for (Long id : promotionIds) {
+            Promotion promotion = promotionServices.findById(id);
+            if (promotion != null) {
+                for (ProductPromotion productPromotion : promotion.getProduct_promotion()) {
+                    if (order.getProducts().contains(productPromotion.getProduct())) {
+                        applyPromotion(order, promotion);
+                    }
+                }
+            }
+        }
+    }
+
+    private void applyPromotion(Order order, Promotion promotion) {
+        switch (promotion.getType()) {
+            case AMOUNT:
+                order.setCostTotal(order.getCostTotal() - promotion.getValue());
+                break;
+            case PERCENTAGE:
+                order.setCostTotal(order.getCostTotal() - (order.getCostTotal() * promotion.getValue() / 100));
+                break;
+        }
     }
 
 

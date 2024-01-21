@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum PromotionType {
-    MOUNT("mount"),
-    PERCENTAJE("percentaje");
+    AMOUNT("amount"),
+    PERCENTAGE("percentage");
 
     private final String type;
 
