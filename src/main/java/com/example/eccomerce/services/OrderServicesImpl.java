@@ -11,7 +11,10 @@ import com.example.eccomerce.controllers.dtos.request.CreateOrderProductRequest;
 import com.example.eccomerce.entities.enums.PaymentMethodType;
 import com.example.eccomerce.services.interfaces.IOrderProductServices;
 import com.example.eccomerce.services.interfaces.IProductServices;
+import com.stripe.Stripe;
+import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,12 @@ public class OrderServicesImpl implements IOrderServices {
     @Autowired
     @Lazy
     private IProductServices productServices;
+
+    @Value("${stripe.secret-key}")
+    private String stripeSecretKey;
+
+    @Value("${stripe.publishable-key}")
+    private String stripePublishableKey;
 
     private static final String FormatTime = "yyyy-MM-dd";
 
@@ -144,6 +153,22 @@ public class OrderServicesImpl implements IOrderServices {
         order.setUser(userService.findById(request.getUserId()));
         order.setDate(LocalDate.now());
         return order;
+    }
+
+    private String createPaymentIntent(int amount, String currency) {
+        Stripe.apiKey = stripeSecretKey;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("amount", amount);
+        params.put("currency", currency);
+
+        try {
+            PaymentIntent paymentIntent = PaymentIntent.create(params);
+            return paymentIntent.getClientSecret();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private DateTimeFormatter getFormatter(String format) {
