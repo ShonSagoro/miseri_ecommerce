@@ -54,13 +54,19 @@ public class OrderServicesImpl implements IOrderServices {
     @Value("${stripe.publishable-key}")
     private String stripePublishableKey;
 
-    private static final String FormatTime = "yyyy-MM-dd";
+    private static final String FORMATTIME = "MMM";
+    private static final Locale LOCALE = new Locale("es", "ES");
 
     @Override
     public BaseResponse create(CreateOrderRequest request) {
         Order order = repository.save(from(request));
         addProducts(request, order);
-        return BaseResponse.builder().data(from(order)).message("The order was created").success(true).httpStatus(HttpStatus.CREATED).build();
+        Boolean status=simulateTransaction(order);
+        if (status) {
+            return BaseResponse.builder().data(from(order)).message("The order was created").success(true).httpStatus(HttpStatus.CREATED).build();
+        }else{
+            return BaseResponse.builder().data(from(order)).message("The order was created but the transsaction to: "+request.getPaymentMethod()+" not.").success(true).httpStatus(HttpStatus.CREATED).build();
+        }
     }
 
     @Override
@@ -120,6 +126,43 @@ public class OrderServicesImpl implements IOrderServices {
         return from(findById(id));
     }
 
+
+    private Boolean simulateTransaction(Order order) {
+        Float amount = order.getCostTotal();
+        switch (order.getType()) {
+            case STRIPE:
+                return simulateStripeTransaction(amount);
+            case PAYPAL:
+                return simulatePaypalTransaction(amount);
+            default:
+                throw new IllegalArgumentException("Unsupported payment method: " + order.getType());
+        }
+    }
+
+    private Boolean simulateStripeTransaction(Float amount) {
+        try {
+            Stripe.apiKey = stripeSecretKey;
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("amount", amount.intValue() * 100);
+            params.put("currency", "usd");
+            PaymentIntent paymentIntent = PaymentIntent.create(params);
+
+            paymentIntent.cancel();
+
+            System.out.println("Stripe transaction simulated successfully");
+            return true;
+        } catch (Exception e) {
+            System.out.println("Failed to simulate Stripe transaction: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private Boolean simulatePaypalTransaction(Float amount) {
+        // TODO: Implement this method
+        return true;
+    }
+
     private void addProducts(CreateOrderRequest request, Order order) {
         List<Long> list = request.getProductsId();
         Float costTotal = 0f;
@@ -140,7 +183,7 @@ public class OrderServicesImpl implements IOrderServices {
         response.setCostTotal(order.getCostTotal());
         response.setPaymentMethod(converter.convertToDatabaseColumn(order.getType()));
         response.setUserId(order.getUser().getId());
-        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("MMM", new Locale("es", "ES"));
+        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern(FORMATTIME, LOCALE);
         response.setTime(order.getDate().format(monthFormatter));
         response.setProducts(orderProductServices.getProductsReponseByIdOrder(order.getId()));
         return response;
