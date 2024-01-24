@@ -2,6 +2,7 @@ package com.example.eccomerce.services.interfaces;
 
 import com.example.eccomerce.controllers.dtos.request.CreateProductPromotionRequest;
 import com.example.eccomerce.controllers.dtos.response.BaseResponse;
+import com.example.eccomerce.entities.Promotion;
 
 public interface IProductPromotionServices {
 
@@ -9,4 +10,5 @@ public interface IProductPromotionServices {
     BaseResponse getProductsByIdPromotion(Long promotionId);
 
     BaseResponse getPromotionsByIdProduct(Long productId);
+
 }

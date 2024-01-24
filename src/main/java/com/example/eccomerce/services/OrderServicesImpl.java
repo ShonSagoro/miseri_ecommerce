@@ -2,12 +2,11 @@ package com.example.eccomerce.services;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import com.example.eccomerce.controllers.dtos.request.CreateOrderProductRequest;
+import com.example.eccomerce.controllers.dtos.request.ProductCantRequest;
+import com.example.eccomerce.entities.Product;
 import com.example.eccomerce.entities.Promotion;
 import com.example.eccomerce.entities.enums.PaymentMethodType;
 import com.example.eccomerce.entities.pivot.ProductPromotion;
@@ -51,6 +50,10 @@ public class OrderServicesImpl implements IOrderServices {
     @Lazy
     private IPromotionServices promotionServices;
 
+    @Autowired
+    @Lazy
+    private IProductPromotionServices productPromotionServices;
+
     @Value("${stripe.secret-key}")
     private String stripeSecretKey;
 
@@ -59,18 +62,22 @@ public class OrderServicesImpl implements IOrderServices {
 
     private static final String FORMATTIME = "MMM";
     private static final Locale LOCALE = new Locale("es", "ES");
+    private List<Product> products = new ArrayList<>();
 
     @Override
     public BaseResponse create(CreateOrderRequest request) {
         Order order = repository.save(from(request));
         addProducts(request, order);
         addPromotions(request,order);
-        Boolean status=simulateTransaction(order);
-        if (status) {
-            return BaseResponse.builder().data(from(order)).message("The order was created").success(true).httpStatus(HttpStatus.CREATED).build();
-        }else{
-            return BaseResponse.builder().data(from(order)).message("The order was created but the transsaction to: "+request.getPaymentMethod()+" not.").success(true).httpStatus(HttpStatus.CREATED).build();
-        }
+        String message = simulateTransaction(order) ?
+                "The order was created"
+                : "The order was created but the transsaction to: " + request.getPaymentMethod() + " not.";
+        return BaseResponse.builder()
+                .data(from(order))
+                .message(message)
+                .success(true)
+                .httpStatus(HttpStatus.CREATED).build();
+
     }
 
     @Override
@@ -136,9 +143,7 @@ public class OrderServicesImpl implements IOrderServices {
             Promotion promotion = promotionServices.findById(id);
             if (promotion != null) {
                 for (ProductPromotion productPromotion : promotion.getProduct_promotion()) {
-                    if (order.getProducts().contains(productPromotion.getProduct())) {
-                        applyPromotion(order, promotion);
-                    }
+                    applyPromotion(order, promotion);
                 }
             }
         }
@@ -193,14 +198,16 @@ public class OrderServicesImpl implements IOrderServices {
     }
 
     private void addProducts(CreateOrderRequest request, Order order) {
-        List<Long> list = request.getProductsId();
+        List<ProductCantRequest> list = request.getProducts();
         Float costTotal = 0f;
-        for (Long id : list) {
+        for (ProductCantRequest productCantRequest : list) {
             CreateOrderProductRequest createOrderRequest = new CreateOrderProductRequest();
-            createOrderRequest.setProductId(id);
+            createOrderRequest.setProductId(productCantRequest.getId());
             createOrderRequest.setOrderId(order.getId());
             orderProductServices.create(createOrderRequest);
-            costTotal+=productServices.findById(id).getPrice();
+            if (productCantRequest.getCant()==0)
+                productCantRequest.setCant(1);
+            costTotal+=(productServices.findById(productCantRequest.getId()).getPrice())*productCantRequest.getCant();
         }
         order.setCostTotal(costTotal);
         repository.save(order);

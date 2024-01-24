@@ -13,7 +13,7 @@ public class CreateOrderRequest {
 
     private Long userId;
 
-    private List<Long> productsId;
+    private List<ProductCantRequest> products;
 
     private List<Long> promotionsId;
 }

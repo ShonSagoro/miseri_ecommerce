@@ -68,6 +68,8 @@ public class ProductoPromotionsServicesImpl implements IProductPromotionServices
                 .httpStatus(HttpStatus.OK).build();
     }
 
+
+
     private GetPromotionResponse from(PromotionProjection promotion) {
         return promotionServices.findResponseById(promotion.getId());
     }
